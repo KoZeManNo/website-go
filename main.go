@@ -41,8 +41,8 @@ func ws(w http.ResponseWriter, r *http.Request) {
 
 	conn.WriteMessage(websocket.TextMessage, []byte(all))
 
-	defer removeConnection(conn)
 	defer conn.Close()
+	defer removeConnection(conn)
 
 	for {
 		msgType, msg, err := conn.ReadMessage()
