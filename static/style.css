@@ -1,0 +1,38 @@
+body {
+    margin: 0;
+    background-color: #000000;
+}
+input {
+    display: none;
+}
+
+.background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    z-index: -1;
+    cursor: pointer;
+}
+
+.ui {
+    display: grid;
+    place-items: center;
+}
+.socialbar {
+    margin: 15px;
+    padding-left: 5px;
+    padding-right: 5px;
+
+    display: flex;
+    justify-content: space-between;
+    background-color: #1C2541;
+    border-radius: 16px;
+}
+.socialbar * {
+    padding: 5px;
+}
