@@ -78,5 +78,5 @@ func main() {
 	http.Handle("/", http.FileServer(http.FS(fs)))
 	http.HandleFunc("/ws", ws)
 
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServeTLS(":443", "/etc/letsencrypt/live/kozemanno.dev/fullchain.pem", "/etc/letsencrypt/live/kozemanno.dev/privkey.pem", nil)
 }
