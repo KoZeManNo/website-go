@@ -2,6 +2,7 @@ package main
 
 import (
 	"embed"
+	"flag"
 	"io/fs"
 	"net/http"
 	"regexp"
@@ -10,13 +11,17 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-//go:embed static
-var files embed.FS
-var validMessage = regexp.MustCompile(`^[0-8][A-Fa-f0-9]{6}$`)
-var upgrader = websocket.Upgrader{}
+var (
+	//go:embed static
+	files embed.FS
 
-var connections []*websocket.Conn
-var colors [9]string
+	prod         = flag.Bool("prod", false, "If the application is running on production")
+	validMessage = regexp.MustCompile(`^[0-8][A-Fa-f0-9]{6}$`)
+	upgrader     = websocket.Upgrader{}
+
+	connections []*websocket.Conn
+	colors      [9]string
+)
 
 func removeConnection(conn *websocket.Conn) {
 	for i, client := range connections {
@@ -67,6 +72,8 @@ func ws(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	flag.Parse()
+
 	for i := range colors {
 		colors[i] = "000000"
 	}
@@ -77,6 +84,9 @@ func main() {
 	}
 	http.Handle("/", http.FileServer(http.FS(fs)))
 	http.HandleFunc("/ws", ws)
-
-	http.ListenAndServeTLS(":443", "/etc/letsencrypt/live/kozemanno.dev/fullchain.pem", "/etc/letsencrypt/live/kozemanno.dev/privkey.pem", nil)
+	if *prod {
+		http.ListenAndServeTLS(":443", "/etc/letsencrypt/live/kozemanno.dev/fullchain.pem", "/etc/letsencrypt/live/kozemanno.dev/privkey.pem", nil)
+	} else {
+		http.ListenAndServe(":8080", nil)
+	}
 }
